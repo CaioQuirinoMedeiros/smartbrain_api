@@ -34,6 +34,8 @@ isEmpty = (data) => {
     return Object.values(data).indexOf('') === -1 ? false : true;
 }
 
+app.get('/', (req, res) => { res.json('It\'s working!!')});
+
 app.post('/signin', (req, res) => { signin.handleSignIn(req, res, db, bcrypt) });
 
 app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });
