@@ -28,7 +28,7 @@ app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.listen(3001, () => console.log('running'));
+app.listen(process.env.PORT || 3000, () => console.log(`running on port ${process.env.PORT}`));
 
 isEmpty = (data) => {
     return Object.values(data).indexOf('') === -1 ? false : true;
