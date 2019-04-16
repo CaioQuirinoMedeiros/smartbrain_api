@@ -28,13 +28,14 @@ app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.listen(process.env.PORT || 3000, () => console.log(`running on port ${process.env.PORT}`));
+const port = process.env.PORT || 3001;
+app.listen(port, () => console.log(`running on port ${port}`));
 
 isEmpty = (data) => {
     return Object.values(data).indexOf('') === -1 ? false : true;
 }
 
-app.get('/', (req, res) => { res.json('Working!!') });
+app.get('/', (req, res) => { res.json(`Working!! running on port ${port}`) });
 
 app.post('/signin', (req, res) => { signin.handleSignIn(req, res, db, bcrypt) });
 
