@@ -35,7 +35,7 @@ isEmpty = (data) => {
     return Object.values(data).indexOf('') === -1 ? false : true;
 }
 
-app.get('/', (req, res) => { res.json(`Working!! running on port ${port}`) });
+app.get('/', (req, res) => { res.json(`WORKING ON PORT ${PORT}`) });
 
 app.post('/signin', (req, res) => { signin.handleSignIn(req, res, db, bcrypt) });
 
