@@ -9,6 +9,16 @@ const signin = require("./controllers/signin");
 const profile = require("./controllers/profile");
 const image = require("./controllers/image");
 
+// const db = knex({
+//   client: "pg",
+//   connection: {
+//     host: '127.0.0.1',
+//     user: 'postgres',
+//     password: 'pedemanga',
+//     database: 'smartbrain'
+//   }
+// });
+
 const db = knex({
   client: "pg",
   connection: {
@@ -17,16 +27,12 @@ const db = knex({
   }
 });
 
-db.select("*")
-  .from("users")
-  .then(data => console.log);
-
 app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`running on port ${PORT}`));
+app.listen(PORT, () => console.log(`running on port ${PORT}. Database: ${process.env.DATABASE_URL}`));
 
 isEmpty = data => {
   return Object.values(data).indexOf("") === -1 ? false : true;

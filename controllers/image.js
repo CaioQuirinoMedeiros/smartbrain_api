@@ -4,10 +4,11 @@ const Clarifai = require("clarifai");
 const app = new Clarifai.App({ apiKey: "1563914a78a949719ddc10cae7cde03e" });
 
 const handleApiCall = (req, res) => {
+  console.log(req.body.input)
   app.models
     .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
     .then(data => res.json(data))
-    .catch(error => res.status(400).json("unable to work with api", error));
+    .catch(error => res.status(400).json({ error:"unable to work with api"}));
 };
 
 const handleImage = (req, res, db) => {
