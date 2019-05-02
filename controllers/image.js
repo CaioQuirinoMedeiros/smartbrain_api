@@ -4,11 +4,10 @@ const Clarifai = require("clarifai");
 const app = new Clarifai.App({ apiKey: "1563914a78a949719ddc10cae7cde03e" });
 
 const handleApiCall = (req, res) => {
-  console.log(req.body.input)
   app.models
     .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
     .then(data => res.json(data))
-    .catch(error => res.status(400).json({ error:"unable to work with api"}));
+    .catch(error => res.status(400).json({ error: "Unable to work with api"}));
 };
 
 const handleImage = (req, res, db) => {
@@ -18,7 +17,7 @@ const handleImage = (req, res, db) => {
     .increment("entries", 1)
     .returning("entries")
     .then(entries => res.json(entries[0]))
-    .catch(error => res.status(400).json("unable to get entries"));
+    .catch(error => res.status(400).json({error: "Unable to update de entries"}));
 };
 
 module.exports = { handleImage, handleApiCall };

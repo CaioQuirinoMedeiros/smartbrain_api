@@ -32,14 +32,14 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`running on port ${PORT}. Database: ${process.env.DATABASE_URL}`));
+app.listen(PORT);
 
 isEmpty = data => {
   return Object.values(data).indexOf("") === -1 ? false : true;
 };
 
 app.get("/", (req, res) => {
-  res.json(`WORKING ON PORT ${PORT}`);
+res.json(`Running on port ${PORT}. Database: ${process.env.DATABASE_URL}`);
 });
 
 app.post("/signin", (req, res) => {
@@ -58,6 +58,6 @@ app.put("/image", (req, res) => {
   image.handleImage(req, res, db);
 });
 
-app.post("/imageurl", (req, res) => {
+app.post("/image", (req, res) => {
   image.handleApiCall(req, res);
 });

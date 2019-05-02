@@ -11,10 +11,12 @@ const handleSignIn = (req, res, db, bcrypt) => {
           .from("users")
           .where("email", "=", req.body.email)
           .then(user => res.json(user[0]))
-          .catch(error => res.status(400).json("error getting the user data"));
-      else res.status(400).json("invalid password");
+          .catch(error =>
+            res.status(401).json({ error: "Error getting the user data" })
+          );
+      else res.status(402).json({ error: "Invalid password" });
     })
-    .catch(() => res.status(400).json("no such email in database"));
+    .catch(() => res.status(404).json({ error: "No such email in database" }));
 };
 
 module.exports = { handleSignIn };
