@@ -1,22 +1,30 @@
-const handleSignIn = (req, res, db, bcrypt) => {
+const handleSignIn = async (req, res, db, bcrypt) => {
   if (isEmpty(req.body))
-    return res.status(400).json("invalid email or password");
-  db.select("email", "hash")
-    .from("login")
-    .where("email", "=", req.body.email)
-    .then(data => {
-      const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
-      if (isValid)
-        db.select("*")
-          .from("users")
-          .where("email", "=", req.body.email)
-          .then(user => res.json(user[0]))
-          .catch(error =>
-            res.status(401).json({ error: "Error getting the user data" })
-          );
-      else res.status(402).json({ error: "Invalid password" });
-    })
-    .catch(() => res.status(404).json({ error: "No such email in database" }));
+    return res.status(400).json("Preencha seu e-mail e senha");
+
+  const { email, password } = req.body;
+
+  try {
+    let user = await db
+      .first("*")
+      .from("users")
+      .where("email", email);
+
+    const isValid = bcrypt.compareSync(password, user.password);
+
+    user = Object.keys(user)
+      .filter(key => key !== "password")
+      .reduce((obj, key) => {
+        obj[key] = user[key];
+        return obj;
+      }, {});
+
+    return isValid
+      ? res.status(200).send(user)
+      : res.status(400).send({ message: "Senha incorreta" });
+  } catch (err) {
+    return res.status(400).send({ message: "Usuário não encontrado" });
+  }
 };
 
 module.exports = { handleSignIn };

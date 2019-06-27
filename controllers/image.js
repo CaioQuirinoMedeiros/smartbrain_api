@@ -1,23 +1,33 @@
 const Clarifai = require("clarifai");
 
-// Criando instância da API
-const app = new Clarifai.App({ apiKey: "1563914a78a949719ddc10cae7cde03e" });
+const app = new Clarifai.App({ apiKey: process.env.CLARIFAI_KEY });
 
-const handleApiCall = (req, res) => {
-  app.models
-    .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
-    .then(data => res.json(data))
-    .catch(error => res.status(400).json({ error: "Unable to work with api"}));
+const handleApiCall = async req => {
+  try {
+    const response = await app.models.predict(
+      Clarifai.FACE_DETECT_MODEL,
+      req.body.input
+    );
+
+    return { success: true, regions: response.outputs[0].data.regions };
+  } catch (err) {
+    return { success: false };
+  }
 };
 
-const handleImage = (req, res, db) => {
+const updateEntries = async (req, db) => {
   const { id } = req.body;
-  db("users")
-    .where("id", "=", id)
-    .increment("entries", 1)
-    .returning("entries")
-    .then(entries => res.json(entries[0]))
-    .catch(error => res.status(400).json({error: "Unable to update de entries"}));
+
+  try {
+    const entries = await db("users")
+      .where({ id })
+      .increment("entries", 1)
+      .returning("entries");
+
+    return { success: true, entries: entries[0] };
+  } catch (err) {
+    return { success: false };
+  }
 };
 
-module.exports = { handleImage, handleApiCall };
+module.exports = { handleApiCall, updateEntries };

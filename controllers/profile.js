@@ -1,13 +1,16 @@
-const handleProfile = (req, res, db) => {
+const handleProfile = async (req, res, db) => {
   const { id } = req.params;
-  db.select("*")
-    .from("users")
-    .where({ id })
-    .then(user => {
-      if (!user.length) throw Error;
-      res.json(user[0]);
-    })
-    .catch(error => res.status(400).json("error gettind user"));
+
+  try {
+    const user = await db
+      .first("*")
+      .from("users")
+      .where({ id });
+
+    return res.status(200).send({ ...user, password: null });
+  } catch (err) {
+    return res.status(400).send({ message: "Erro ao buscar usuário" });
+  }
 };
 
 module.exports = { handleProfile };

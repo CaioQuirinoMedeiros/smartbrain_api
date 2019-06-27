@@ -1,33 +1,40 @@
-const handleRegister = (req, res, db, bcrypt) => {
-  if (isEmpty(req.body)) return res.status(400).json("invalid inputs");
+const handleRegister = async (req, res, db, bcrypt) => {
   const { name, email, password } = req.body;
+
+  if (isEmpty(req.body))
+    return res.status(400).send({ message: "Preencha os campos obrigatórios" });
+
+  if (password.length < 6)
+    return res
+      .status(400)
+      .send({ message: "A senha deve ter no mínimo 6 digitos" });
+
+  if (!validateEmail(email))
+    return res.status(400).send({ message: "E-mail inválido" });
+
   const hash = bcrypt.hashSync(password);
-  db.transaction(trx => {
-    trx
+
+  try {
+    let user = await db("users")
+      .returning("*")
       .insert({
-        hash,
-        email
-      })
-      .into("login")
-      .returning("email")
-      .then(loginEmail => {
-        return trx("users")
-          .returning("*")
-          .insert({
-            email: loginEmail[0],
-            name,
-            joined: new Date()
-          })
-          .then(user => res.json(user[0]))
-          .catch(error =>
-            res.status(400).json({error: "Unable to register"})
-          );
-      })
-      .then(trx.commit)
-      .catch(() => {
-        res.status(400).json({error: "Email already registered"});
-        trx.rollback;
+        name,
+        email,
+        password: hash,
+        joined: new Date()
       });
-  });
+
+    user = Object.keys(user[0])
+      .filter(key => key !== "password")
+      .reduce((obj, key) => {
+        obj[key] = user[0][key];
+        return obj;
+      }, {});
+
+    res.status(201).send(user);
+  } catch (err) {
+    res.status(400).send({ message: "Erro ao se registrar" });
+  }
 };
+
 module.exports = { handleRegister };
