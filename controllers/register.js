@@ -33,7 +33,7 @@ const handleRegister = async (req, res, db, bcrypt) => {
 
     res.status(201).send(user);
   } catch (err) {
-    res.status(400).send({ message: "Erro ao se registrar" });
+    res.status(400).send({ message: "Erro ao se registrar", error: err });
   }
 };
 

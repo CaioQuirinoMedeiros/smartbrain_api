@@ -11,10 +11,10 @@ const profile = require("./controllers/profile");
 const image = require("./controllers/image");
 
 const connection = {
-  host: "127.0.0.1",
-  user: "postgres",
-  password: "pedemanga",
-  database: "smartbrain"
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
 };
 
 const db = knex({
@@ -66,10 +66,8 @@ app.post("/image", async (req, res) => {
   if (!updateEntries.success)
     return res.status(400).send({ message: "Erro ao validar usuário" });
 
-  return res
-    .status(201)
-    .send({
-      regions: clarifaiResponse.regions,
-      entries: updateEntries.entries
-    });
+  return res.status(201).send({
+    regions: clarifaiResponse.regions,
+    entries: updateEntries.entries
+  });
 });
